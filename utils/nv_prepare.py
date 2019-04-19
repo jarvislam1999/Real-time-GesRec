@@ -5,7 +5,7 @@ import glob
 import sys
 from subprocess import call
 
-dataset_path = "/data2/nvGesture"
+dataset_path = "/mnt/data/yxchen/gesture-datasets/nvGesture"
 def load_split_nvgesture(file_with_split = './nvgesture_train_correct.lst',list_split = list()):
     file_with_split = os.path.join(dataset_path,file_with_split)
     params_dictionary = dict()
@@ -83,7 +83,7 @@ def create_list(example_config, sensor,  class_types = 'all'):
         elif class_types == 'binary':
             new_lines.append(folder_path + ' ' + '1' + ' ' + str(start)+ ' ' + str(n_images))
 
-def extract_frames(sensors=["color", "depth"])
+def extract_frames(sensors=["color", "depth"]):
     """Extract frames of .avi files.
     
     Parameters

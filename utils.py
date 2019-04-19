@@ -129,6 +129,8 @@ def calculate_accuracy(outputs, targets):
 
     _, pred = outputs.topk(1, 1, True)
     pred = pred.t()
+    pred = pred.cpu()
+    targets = targets.cpu()
     correct = pred.eq(targets.view(1, -1))
     n_correct_elems = correct.float().sum().item()
 
@@ -140,6 +142,8 @@ def calculate_precision(outputs, targets):
 
     _, pred = outputs.topk(1, 1, True)
     pred = pred.t()
+    pred = pred.cpu()
+    targets = targets.cpu()
     return  precision_score(targets.view(-1), pred.view(-1), average = 'macro')
 
 
@@ -148,4 +152,6 @@ def calculate_recall(outputs, targets):
 
     _, pred = outputs.topk(1, 1, True)
     pred = pred.t()
+    pred = pred.cpu()
+    targets = targets.cpu()
     return  recall_score(targets.view(-1), pred.view(-1), average = 'macro')

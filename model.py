@@ -69,7 +69,7 @@ def generate_model(opt):
 
         if opt.modality == 'RGB' and opt.model != 'c3d':
             print("[INFO]: RGB model is used for init model")
-            model = _modify_first_conv_layer(model,3,3) ##### Check models trained (3,7,7) or (7,7,7)
+            # model = _modify_first_conv_layer(model,3,3) ##### Check models trained (3,7,7) or (7,7,7)
         elif opt.modality == 'Depth':
             print("[INFO]: Converting the pretrained model to Depth init model")
             model = _construct_depth_model(model)
