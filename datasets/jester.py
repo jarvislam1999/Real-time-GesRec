@@ -10,6 +10,7 @@ import copy
 from numpy.random import randint
 import numpy as np
 import random
+import glob
 
 from utils import load_value_file
 
@@ -103,6 +104,8 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     dataset = []
     print("[INFO]: Jester Dataset - " + subset + " is loading...")
     for i in range(len(video_names)):
+    # to test first 3000 only, use this one:
+    # for i in range(3000):
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
@@ -111,8 +114,10 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         if not os.path.exists(video_path):
             continue
 
-        n_frames_file_path = os.path.join(video_path, 'n_frames')
-        n_frames = int(load_value_file(n_frames_file_path))
+        #n_frames_file_path = os.path.join(video_path, 'n_frames')
+        #n_frames = int(load_value_file(n_frames_file_path))
+        n_frames = len(glob.glob(os.path.join(video_path, '*.jpg')))
+
         if n_frames <= 0:
             continue
 

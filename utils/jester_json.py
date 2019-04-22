@@ -34,16 +34,18 @@ def load_labels(label_csv_path):
     return labels
 
 def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, 
-                                           val_csv_path, dst_json_path):
+                                           val_csv_path, test_csv_path, dst_json_path):
     labels = load_labels(label_csv_path)
     train_database = convert_csv_to_dict(train_csv_path, 'training', labels)
     val_database = convert_csv_to_dict(val_csv_path, 'validation', labels)
+    test_database = convert_csv_to_dict(val_csv_path, 'testing', labels)
     
     dst_data = {}
     dst_data['labels'] = labels
     dst_data['database'] = {}
     dst_data['database'].update(train_database)
     dst_data['database'].update(val_database)
+    dst_data['database'].update(test_database)
 
     with open(dst_json_path, 'w') as dst_file:
         json.dump(dst_data, dst_file)
@@ -54,7 +56,8 @@ if __name__ == '__main__':
     label_csv_path = os.path.join(csv_dir_path, 'classInd.txt')
     train_csv_path = os.path.join(csv_dir_path, 'trainlist01.txt')
     val_csv_path = os.path.join(csv_dir_path, 'vallist01.txt')
+    test_csv_path = os.path.join(csv_dir_path, 'testlist01.txt')
     dst_json_path = os.path.join(csv_dir_path, 'jester.json')
 
     convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path,
-                                               val_csv_path, dst_json_path)
+                                               val_csv_path, test_csv_path, dst_json_path)

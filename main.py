@@ -21,6 +21,8 @@ from validation import val_epoch
 import test
 import pdb
 
+import shutil
+
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
     torch.save(state, '%s/%s_checkpoint.pth' % (opt.result_path, opt.store_name))

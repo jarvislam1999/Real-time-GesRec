@@ -29,7 +29,7 @@ from utils import AverageMeter, calculate_precision, calculate_recall
 import pdb
 from sklearn.metrics import confusion_matrix
 
-def plot_cm(cm, classes, normalize = True):
+def plot_cm(cm, classes=None, normalize = True):
     import seaborn as sns
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
@@ -44,6 +44,8 @@ def plot_cm(cm, classes, normalize = True):
     ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
     plt.xticks(rotation='vertical')
     plt.yticks(rotation='horizontal')
+
+    print("Confusion matrix plotted")
     
 
 
@@ -148,9 +150,12 @@ recalls = AverageMeter()
 y_true = []
 y_pred = []
 end_time = time.time()
+
+fout = open(os.path.join(opt.result_path, 'result.csv'), 'w')
+
 for i, (inputs, targets) in enumerate(test_loader):
     if not opt.no_cuda:
-        targets = targets.cuda(async=True)
+        targets = targets.cuda(non_blocking=True)
     #inputs = Variable(torch.squeeze(inputs), volatile=True)
     with torch.no_grad():
         inputs = Variable(inputs)
@@ -161,6 +166,9 @@ for i, (inputs, targets) in enumerate(test_loader):
         recorder.append(outputs.data.cpu().numpy().copy())
     y_true.extend(targets.cpu().numpy().tolist())
     y_pred.extend(outputs.argmax(1).cpu().numpy().tolist())
+
+    _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
+    fout.write('%s;%s\n' % (test_data.data[i]['video_id'], test_data.class_names[_cls]))
 
     #outputs = torch.unsqueeze(torch.mean(outputs, 0), 0)
     #pdb.set_trace()
@@ -227,3 +235,17 @@ test_logger.log({
 
 print('-----Evaluation is finished------')
 print('Overall Prec@1 {:.05f}% Prec@5 {:.05f}%'.format(top1.avg, top5.avg))
+
+cf = confusion_matrix(y_true, y_pred).astype(float)
+
+cls_cnt = cf.sum(axis=1)
+cls_hit = np.diag(cf)
+cls_acc = cls_hit / cls_cnt
+# print('Class Accuracy {:.02f}%'.format(cls_acc * 100))
+for i in range(len(test_data.class_names)):
+    print(test_data.class_names[i], ': {:.02f}%'.format(cls_acc[i]))
+plot_cm(cf)
+
+# print("y_true, y_pred")
+# for i in range(len(y_true)):
+#     print(y_true[i], y_pred[i])
