@@ -38,7 +38,7 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path,
     labels = load_labels(label_csv_path)
     train_database = convert_csv_to_dict(train_csv_path, 'training', labels)
     val_database = convert_csv_to_dict(val_csv_path, 'validation', labels)
-    test_database = convert_csv_to_dict(val_csv_path, 'testing', labels)
+    test_database = convert_csv_to_dict(test_csv_path, 'testing', labels)
     
     dst_data = {}
     dst_data['labels'] = labels

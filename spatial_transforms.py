@@ -167,6 +167,19 @@ class Scale(object):
     def randomize_parameters(self):
         pass
 
+class CenterBottomCrop(object):
+    def __init__(self):
+        pass
+    
+    def __call__(self, img):
+        w, h = img.size
+        tw = th = 8. / 11 * h
+        x1 = int((w - tw) / 2)
+        y1 = int(h - th)
+        return img.crop((x1, y1, x1 + tw, y1 + th))
+
+    def randomize_parameters(self):
+        pass
 
 class CenterCrop(object):
     """Crops the given PIL.Image at the center.

@@ -4,12 +4,10 @@
 #%% 
 
 # Test classifier with the best model
-!CUDA_VISIBLE_DEVICES=1,2 
-!echo $CUDA_VISIBLE_DEVICES
 !python offline_test.py \
 	--root_path /home/yxchen/Real-time-GesRec \
 	--video_path /mnt/data/yxchen/gesture-datasets/nvGesture \
-	--annotation_path annotation_nvGesture/nvall.json\
+	--annotation_path annotation_nvGesture/nvall_but_None.json\
 	--result_path results/nv_color_classifier_test \
 	--resume_path /home/yxchen/Real-time-GesRec/results/nv_color_classifier/model_checkpoint.pth \
 	--dataset nv \

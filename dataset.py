@@ -85,7 +85,7 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
 
 
 def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
-    assert opt.dataset in ['jester', 'egogesture', 'nv']
+    assert opt.dataset in ['jester', 'egogesture', 'nv', 'sc']
     assert opt.test_subset in ['val', 'test']
 
     if opt.test_subset == 'val':
@@ -93,7 +93,18 @@ def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
     else:
         subset = 'testing'
 
-    if opt.dataset == 'jester':
+    if opt.dataset == 'sc':
+        test_data = Jester(
+            opt.video_path,
+            opt.annotation_path,
+            subset,
+            opt.n_val_samples,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            modality=opt.modality,
+            sample_duration=opt.sample_duration)
+    elif opt.dataset == 'jester':
         test_data = Jester(
             opt.video_path,
             opt.annotation_path,

@@ -98,11 +98,26 @@ elif not opt.std_norm:
 else:
     norm_method = Normalize(opt.mean, opt.std)
 
+# original
+# spatial_transform = Compose([
+#     #Scale(opt.sample_size),
+#     Scale(112),
+#     CenterCrop(112),
+#     ToTensor(opt.norm_value), norm_method
+#     ])
 
+# test 15deg bl crop
+# spatial_transform = Compose([
+#     #Scale(opt.sample_size),
+#     Scale(112),
+#     CornerCrop(112, 'bl'),
+#     ToTensor(opt.norm_value), norm_method
+#     ])
+
+# test 1m center bottom crop
 spatial_transform = Compose([
-    #Scale(opt.sample_size),
+    CenterBottomCrop(),
     Scale(112),
-    CenterCrop(112),
     ToTensor(opt.norm_value), norm_method
     ])
 temporal_transform = TemporalCenterCrop(opt.sample_duration)
@@ -151,7 +166,7 @@ y_true = []
 y_pred = []
 end_time = time.time()
 
-fout = open(os.path.join(opt.result_path, 'result.csv'), 'w')
+# fout = open(os.path.join(opt.result_path, 'result.csv'), 'w')
 
 for i, (inputs, targets) in enumerate(test_loader):
     if not opt.no_cuda:
@@ -168,7 +183,7 @@ for i, (inputs, targets) in enumerate(test_loader):
     y_pred.extend(outputs.argmax(1).cpu().numpy().tolist())
 
     _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
-    fout.write('%s;%s\n' % (test_data.data[i]['video_id'], test_data.class_names[_cls]))
+    # fout.write('%s;%s\n' % (test_data.data[i]['video_id'], test_data.class_names[_cls]))
 
     #outputs = torch.unsqueeze(torch.mean(outputs, 0), 0)
     #pdb.set_trace()
@@ -246,6 +261,6 @@ for i in range(len(test_data.class_names)):
     print(test_data.class_names[i], ': {:.02f}%'.format(cls_acc[i]))
 plot_cm(cf)
 
-# print("y_true, y_pred")
-# for i in range(len(y_true)):
-#     print(y_true[i], y_pred[i])
+print("y_true, y_pred")
+for i in range(len(y_true)):
+    print(y_true[i], y_pred[i])
