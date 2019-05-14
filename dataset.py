@@ -1,18 +1,29 @@
 from datasets.jester import Jester
 from datasets.egogesture import EgoGesture
 from datasets.nv import NV
+from datasets.ems import EMS
 from datasets.egogesture_online import EgoGestureOnline
 from datasets.nv_online import NVOnline
 
 def get_training_set(opt, spatial_transform, temporal_transform,
                      target_transform):
-    assert opt.dataset in ['jester', 'egogesture', 'nv']
+    assert opt.dataset in ['jester', 'egogesture', 'nv', 'ems']
 
     if opt.train_validate:
         subset = ['training', 'validation']
     else:
         subset = 'training'
-    if opt.dataset == 'jester':
+    if opt.dataset == 'ems':
+        training_data = EMS(
+            opt.video_path,
+            opt.annotation_path,
+            subset,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            sample_duration=opt.sample_duration,
+            modality=opt.modality)
+    elif opt.dataset == 'jester':
         training_data = Jester(
             opt.video_path,
             opt.annotation_path,
@@ -47,9 +58,21 @@ def get_training_set(opt, spatial_transform, temporal_transform,
 
 def get_validation_set(opt, spatial_transform, temporal_transform,
                        target_transform):
-    assert opt.dataset in ['jester', 'egogesture', 'nv']
+    assert opt.dataset in ['jester', 'egogesture', 'nv', 'ems']
 
-    if opt.dataset == 'jester':
+    if opt.dataset == 'ems':
+        # no validation for ems now, use testing data instead
+        validation_data = EMS(
+            opt.video_path,
+            opt.annotation_path,
+            'testing',
+            opt.n_val_samples,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            modality=opt.modality,
+            sample_duration=opt.sample_duration)
+    elif opt.dataset == 'jester':
         validation_data = Jester(
             opt.video_path,
             opt.annotation_path,
