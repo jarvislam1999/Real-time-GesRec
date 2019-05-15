@@ -20,9 +20,9 @@ def extract_frames():
         directory = file.split(".")[0] + "_all"
         if not os.path.exists(directory):
             os.makedirs(directory)
-        call(["ffmpeg", "-i",  file, os.path.join(directory, "%05d.jpg"), "-hide_banner"]) 
+            call(["ffmpeg", "-i",  file, os.path.join(directory, "%05d.jpg"), "-hide_banner"]) 
 
-extract_frames()
+# extract_frames()
 
 #%%
 
@@ -61,7 +61,10 @@ def convert_csv_to_dict(csv_path, subset, labels):
 
 def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_csv_path, dst_json_path):
     labels = load_labels(label_csv_path)
-    train_database = convert_csv_to_dict(train_csv_path, 'training', labels)
+    if train_csv_path:
+        train_database = convert_csv_to_dict(train_csv_path, 'training', labels)
+    else:
+        train_database = {}
     test_database = convert_csv_to_dict(test_csv_path, 'testing', labels)
     
     dst_data = {}
@@ -75,10 +78,12 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_
 
 
 csv_dir_path = './annotation_ems'
-label_csv_path = os.path.join(csv_dir_path, 'classInd01.txt')
-train_csv_path = os.path.join(csv_dir_path, 'trainlist01.txt')
-test_csv_path = os.path.join(csv_dir_path, 'testlist01.txt')
-dst_json_path = os.path.join(csv_dir_path, 'ems01.json')
+r = '05.5'
+label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
+train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
+# train_csv_path = None
+test_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % r)
+dst_json_path = os.path.join(csv_dir_path, 'ems%s.json' % r)
 
 convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_csv_path, dst_json_path)
 

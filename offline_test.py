@@ -99,12 +99,12 @@ else:
     norm_method = Normalize(opt.mean, opt.std)
 
 # original
-# spatial_transform = Compose([
-#     #Scale(opt.sample_size),
-#     Scale(112),
-#     CenterCrop(112),
-#     ToTensor(opt.norm_value), norm_method
-#     ])
+spatial_transform = Compose([
+    #Scale(opt.sample_size),
+    Scale(112),
+    CenterCrop(112),
+    ToTensor(opt.norm_value), norm_method
+    ])
 
 # test 15deg bl crop
 # spatial_transform = Compose([
@@ -115,11 +115,11 @@ else:
 #     ])
 
 # test 1m center bottom crop
-spatial_transform = Compose([
-    CenterBottomCrop(),
-    Scale(112),
-    ToTensor(opt.norm_value), norm_method
-    ])
+# spatial_transform = Compose([
+#     CenterBottomCrop(),
+#     Scale(112),
+#     ToTensor(opt.norm_value), norm_method
+#     ])
 temporal_transform = TemporalCenterCrop(opt.sample_duration)
 #temporal_transform = TemporalBeginCrop(opt.sample_duration)
 #temporal_transform = TemporalEndCrop(opt.sample_duration)
@@ -147,7 +147,6 @@ if opt.resume_path:
 
 
 #test.test(test_loader, model, opt, test_data.class_names)
-
 
 
 recorder = []
@@ -256,7 +255,7 @@ cf = confusion_matrix(y_true, y_pred).astype(float)
 cls_cnt = cf.sum(axis=1)
 cls_hit = np.diag(cf)
 cls_acc = cls_hit / cls_cnt
-# print('Class Accuracy {:.02f}%'.format(cls_acc * 100))
+#print('Class Accuracy {:.02f}%'.format(cls_acc * 100))
 for i in range(len(test_data.class_names)):
     print(test_data.class_names[i], ': {:.02f}%'.format(cls_acc[i]))
 plot_cm(cf)
