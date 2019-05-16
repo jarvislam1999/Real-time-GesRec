@@ -193,6 +193,8 @@ if __name__ == '__main__':
                 'optimizer': optimizer.state_dict(),
                 'best_prec1': best_prec1
                 }
+            if is_best:
+                print('current best: ', i)
             save_checkpoint(state, is_best)
 
         # if not opt.no_train and not opt.no_val:

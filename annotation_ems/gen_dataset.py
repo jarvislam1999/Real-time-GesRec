@@ -5,23 +5,27 @@ import math
 dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "05.5"
+round = "06"
 
 # train: first n
 train_partition = {
     'subject01': 0,
-    'subject01_new_cloth_reattached': 20,
-    'subject01_diff_bg': 0
+    'subject01_new_cloth_reattached': 10,
+    'subject01_diff_bg': 10,
+    'subject01_combinations': 20,
 }
 
 # test: all except first n
 test_partition = {
     'subject01': 0,
-    'subject01_new_cloth_reattached': 20,
-    'subject01_diff_bg': None 
+    'subject01_new_cloth_reattached': 10,
+    'subject01_diff_bg': 10,
+    'subject01_combinations': 20,
 }
 
-labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right']
+labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
+        'arm_down', 'up_left', 'up_right', 'down_left', 
+        'arm_down_left', 'arm_down_right']
 
 def get_list(path, dspath):
     samples = sorted(glob.glob(os.path.join(path, '*_all')))
@@ -54,6 +58,8 @@ def gen_list(dataset, partition, labels, stage='train'):
         data = dataset[k]
         part = partition[k]
         for i, label in enumerate(labels):
+            if not i in data.keys():
+                continue
             if stage == 'train':
                 l += [(x, str(i+1)) for x in data[i][:part]]
             elif stage == 'test':
@@ -70,6 +76,8 @@ def write_labels(labels, path):
     class_ind = [' '.join((str(i+1), x)) for i, x in enumerate(labels)]
     with open(path, 'w') as f:
         f.write('\n'.join(class_ind))
+
+labels.sort(key=lambda item: (-len(item), item))
 
 dataset = make_dataset(dataset_path)
 train_list = gen_list(dataset, train_partition, labels, 'train')

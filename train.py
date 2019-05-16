@@ -62,12 +62,12 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
             'lr': optimizer.param_groups[0]['lr']
         })
         if i % 10 ==0:
-            print('Epoch: [{0}][{1}/{2}]\t lr: {lr:.5f}\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Acc {acc.val:.3f} ({acc.avg:.3f})\t'
-                  'Precision {precision.val:.3f}({precision.avg:.3f})\t'
+            print('Epoch: [{0}][{1}/{2}] | lr: {lr:.5f} | '
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) | '
+                  'Data {data_time.val:.3f} ({data_time.avg:.3f}) | '
+                  'Loss {loss.val:.4f} ({loss.avg:.4f}) | '
+                  'Acc {acc.val:.3f} ({acc.avg:.3f}) | '
+                  'Precision {precision.val:.3f}({precision.avg:.3f}) | '
                   'Recall {recall.val:.3f}({recall.avg:.3f})'.format(
                       epoch,
                       i,
@@ -89,13 +89,13 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         'lr': optimizer.param_groups[0]['lr']
     })
 
-    #if epoch % opt.checkpoint == 0:
-    #    save_file_path = os.path.join(opt.result_path,
-    #                                  'save_{}.pth'.format(epoch))
-    #    states = {
-    #        'epoch': epoch + 1,
-    #        'arch': opt.arch,
-    #        'state_dict': model.state_dict(),
-    #        'optimizer': optimizer.state_dict(),
-    #    }
-    #    torch.save(states, save_file_path)
+    if epoch % opt.checkpoint == 0:
+       save_file_path = os.path.join(opt.result_path,
+                                     'save_{}.pth'.format(epoch))
+       states = {
+           'epoch': epoch + 1,
+           'arch': opt.arch,
+           'state_dict': model.state_dict(),
+           'optimizer': optimizer.state_dict(),
+       }
+       torch.save(states, save_file_path)

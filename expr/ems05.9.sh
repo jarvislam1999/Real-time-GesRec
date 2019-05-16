@@ -4,8 +4,8 @@
 CUDA_VISIBLE_DEVICES=1 python main.py \
 	--root_path /home/yxchen/Real-time-GesRec \
 	--video_path /mnt/data/yxchen/gesture-datasets/ems \
-	--annotation_path annotation_ems/ems05.5.json\
-	--result_path results/ems05.5 \
+	--annotation_path annotation_ems/ems05.9.json\
+	--result_path results/ems05.9 \
 	--pretrain_path /mnt/data/yxchen/model-zoo/jester_resnext_101_RGB_32.pth \
 	--dataset ems \
 	--sample_duration 32 \

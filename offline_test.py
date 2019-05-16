@@ -80,6 +80,10 @@ opt.mean = get_mean(opt.norm_value)
 opt.std = get_std(opt.norm_value)
 
 print(opt)
+
+if not os.path.exists(opt.result_path):
+    os.makedirs(opt.result_path)
+
 with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
     json.dump(vars(opt), opt_file)
 
