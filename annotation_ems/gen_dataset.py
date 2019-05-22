@@ -5,22 +5,16 @@ import math
 dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "06"
+round = "07"
 
 # train: first n
 train_partition = {
-    'subject01': 0,
-    'subject01_new_cloth_reattached': 10,
-    'subject01_diff_bg': 10,
-    'subject01_combinations': 20,
+    'subject01_seq_base': 20,
 }
 
 # test: all except first n
 test_partition = {
-    'subject01': 0,
-    'subject01_new_cloth_reattached': 10,
-    'subject01_diff_bg': 10,
-    'subject01_combinations': 20,
+    'subject01_seq_base': 20,
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
@@ -28,7 +22,7 @@ labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
         'arm_down_left', 'arm_down_right']
 
 def get_list(path, dspath):
-    samples = sorted(glob.glob(os.path.join(path, '*_all')))
+    samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
     l = {}
     for s in samples:
         s = os.path.relpath(s, dspath)

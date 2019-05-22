@@ -15,6 +15,10 @@ def extract_frames():
                                     "data",
                                     "*", 
                                     "*.mov")) # this line should be updated according to the full path 
+    files += glob.glob(os.path.join(dataset_path, 
+                                    "data",
+                                    "*",  "*",
+                                    "*.mov")) # this line should be updated according to the full path 
     for file in files:
         print("Extracting frames for ", file)
         directory = file.split(".")[0] + "_all"
@@ -78,7 +82,7 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_
 
 
 csv_dir_path = './annotation_ems'
-r = '06'
+r = '07'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
 train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
 # train_csv_path = None
