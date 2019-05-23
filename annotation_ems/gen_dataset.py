@@ -3,34 +3,46 @@ import glob
 import math
 import random
 
+### begin of config
+
 random.seed(666)
 
 dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "07.5"
+round = "07.2-rgbd"
+modality = "rgbd" # d, rgb, rgbd
 
 # train: first n
 train_partition = {
-    'subject01_human_seq': 15,
-    'subject01_seq_base2': 15,
+    'subject01_seq_base2': 20,
 }
 
 # test: all except first n
 test_partition = {
-    'subject01_human_seq': 15,
-    'subject01_seq_base2': 15,
+    'subject01_seq_base2': 20,
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
         'arm_down', 'up_left', 'up_right', 'down_left', 
         'arm_down_left', 'arm_down_right']
 
-labels_human = ['human_' + l for l in labels]
-labels += labels_human
+# labels_human = ['human_' + l for l in labels]
+# labels += labels_human
 
-def get_list(path, dspath, paired=False):
-    samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
+### end of config
+
+
+def get_list(path, dspath, paired=False, modality='rgb'):
+    if modality == 'd':
+        samples = sorted(glob.glob(os.path.join(path, 'depth/*_all')))
+    elif modality == 'rgb':
+        samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
+    elif modality == 'rgbd':
+        samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all'))) + \
+            sorted(glob.glob(os.path.join(path, 'depth/*_all')))
+
+
     random.shuffle(samples)
     l = {}
     for s in samples:
@@ -41,11 +53,11 @@ def get_list(path, dspath, paired=False):
             l[label].append(s)
     return l
 
-def make_dataset(path, paired=False):
+def make_dataset(path, paired=False, modality='rgb'):
     dataset = {}
     dpath = os.path.join(path, 'data')
     for d in glob.glob(os.path.join(dpath, '*')):
-        dataset[os.path.relpath(d, dpath)] = get_list(os.path.join(dpath, d), path, paired=paired)
+        dataset[os.path.relpath(d, dpath)] = get_list(os.path.join(dpath, d), path, paired=paired, modality=modality)
     
     return dataset
 
@@ -84,7 +96,7 @@ def write_labels(labels, path):
 
 labels.sort(key=lambda item: (-len(item), item))
 
-dataset = make_dataset(dataset_path, paired=True)
+dataset = make_dataset(dataset_path, paired=True, modality=modality)
 train_list = gen_list(dataset, train_partition, labels, 'train')
 test_list = gen_list(dataset, test_partition, labels, 'test')
 write_list(train_list, os.path.join(output_path, 'trainlist' + round + '.txt'))

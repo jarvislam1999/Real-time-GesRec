@@ -3,7 +3,6 @@ import os
 import glob
 from subprocess import call
 
-dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
 def extract_frames():
     """Extract frames of .mov files.
     
@@ -26,7 +25,6 @@ def extract_frames():
             os.makedirs(directory)
             call(["ffmpeg", "-i",  file, os.path.join(directory, "%05d.jpg"), "-hide_banner"]) 
 
-# extract_frames()
 
 #%%
 
@@ -81,14 +79,20 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_
         json.dump(dst_data, dst_file)
 
 
+
+
+#%%
+
+dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
+# extract_frames()
+
 csv_dir_path = './annotation_ems'
-r = '07.5'
+r = '07.2-depth'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
 train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
 # train_csv_path = None
 test_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % r)
 dst_json_path = os.path.join(csv_dir_path, 'ems%s.json' % r)
 
-convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_csv_path, dst_json_path)
-
-#%%
+convert_jester_csv_to_activitynet_json(
+    label_csv_path, train_csv_path, test_csv_path, dst_json_path)
