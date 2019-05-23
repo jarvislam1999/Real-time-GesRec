@@ -8,23 +8,26 @@ random.seed(666)
 dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "07.4"
+round = "07.5"
 
 # train: first n
 train_partition = {
-    'subject01_seq_base2': 20,
-    'subject01_seq_pairs2': 20,
+    'subject01_human_seq': 15,
+    'subject01_seq_base2': 15,
 }
 
 # test: all except first n
 test_partition = {
-    'subject01_seq_base2': 20,
-    'subject01_seq_pairs2': 20,
+    'subject01_human_seq': 15,
+    'subject01_seq_base2': 15,
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
         'arm_down', 'up_left', 'up_right', 'down_left', 
         'arm_down_left', 'arm_down_right']
+
+labels_human = ['human_' + l for l in labels]
+labels += labels_human
 
 def get_list(path, dspath, paired=False):
     samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
