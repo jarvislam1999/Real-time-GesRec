@@ -82,10 +82,10 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_
 
 
 csv_dir_path = './annotation_ems'
-r = '07'
+r = '07.3'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
-train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
-# train_csv_path = None
+# train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
+train_csv_path = None
 test_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % r)
 dst_json_path = os.path.join(csv_dir_path, 'ems%s.json' % r)
 

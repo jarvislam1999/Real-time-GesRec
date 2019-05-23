@@ -5,42 +5,44 @@ import math
 dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "07"
+round = "07.3"
 
 # train: first n
 train_partition = {
-    'subject01_seq_base': 20,
+    'subject01_seq_pairs2': 0,
 }
 
 # test: all except first n
 test_partition = {
-    'subject01_seq_base': 20,
+    'subject01_seq_pairs2': 0,
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
         'arm_down', 'up_left', 'up_right', 'down_left', 
         'arm_down_left', 'arm_down_right']
 
-def get_list(path, dspath):
+def get_list(path, dspath, paired=False):
     samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
     l = {}
     for s in samples:
         s = os.path.relpath(s, dspath)
-        label = get_label_id(s)
+        label = get_label_id(s, paired=paired)
         if label != None:
             l[label] = l.get(label, [])
             l[label].append(s)
     return l
 
-def make_dataset(path):
+def make_dataset(path, paired=False):
     dataset = {}
     dpath = os.path.join(path, 'data')
     for d in glob.glob(os.path.join(dpath, '*')):
-        dataset[os.path.relpath(d, dpath)] = get_list(os.path.join(dpath, d), path)
+        dataset[os.path.relpath(d, dpath)] = get_list(os.path.join(dpath, d), path, paired=paired)
     
     return dataset
 
-def get_label_id(path):
+def get_label_id(path, paired=False):
+    if paired:
+        path = path.split('FOLLOWED_BY')[-1]
     for i, l in enumerate(labels):
         if l in path:
             return i
@@ -73,7 +75,7 @@ def write_labels(labels, path):
 
 labels.sort(key=lambda item: (-len(item), item))
 
-dataset = make_dataset(dataset_path)
+dataset = make_dataset(dataset_path, paired=True)
 train_list = gen_list(dataset, train_partition, labels, 'train')
 test_list = gen_list(dataset, test_partition, labels, 'test')
 write_list(train_list, os.path.join(output_path, 'trainlist' + round + '.txt'))
