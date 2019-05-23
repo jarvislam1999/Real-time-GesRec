@@ -1,7 +1,7 @@
 import argparse
 
 
-def parse_opts_offline(args):
+def parse_opts_offline(args=None):
     # Offline means not real time 
     parser = argparse.ArgumentParser()
     parser.add_argument(
