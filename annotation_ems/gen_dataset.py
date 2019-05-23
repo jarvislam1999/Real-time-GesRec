@@ -5,19 +5,21 @@ import random
 
 random.seed(666)
 
-dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
+dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "07.2"
+round = "07.4"
 
 # train: first n
 train_partition = {
     'subject01_seq_base2': 20,
+    'subject01_seq_pairs2': 20,
 }
 
 # test: all except first n
 test_partition = {
     'subject01_seq_base2': 20,
+    'subject01_seq_pairs2': 20,
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
