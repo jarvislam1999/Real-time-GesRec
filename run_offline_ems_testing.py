@@ -1,0 +1,18 @@
+CUDA_VISIBLE_DEVICES=1 python offline_test.py \
+	--root_path /home/yxchen/Real-time-GesRec \
+	--video_path /mnt/data/yxchen/gesture-datasets/ems \
+	--annotation_path annotation_ems/ems01.json\
+	--result_path results/ems01_test \
+	--resume_path /home/yxchen/Real-time-GesRec/results/ems01/model_checkpoint.pth \
+	--dataset ems \
+	--sample_duration 32 \
+    --model resnext \
+	--model_depth 101 \
+	--resnet_shortcut B \
+	--batch_size 1 \
+	--n_finetune_classes 4 \
+	--n_threads 1 \
+	--checkpoint 1 \
+	--modality RGB \
+	--n_val_samples 1 \
+	--test_subset test

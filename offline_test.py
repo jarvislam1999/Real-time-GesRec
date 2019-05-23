@@ -180,7 +180,7 @@ for i, (inputs, targets) in enumerate(test_loader):
         targets = Variable(targets)
         outputs = model(inputs)
         if not opt.no_softmax_in_test:
-            outputs = F.softmax(outputs)
+            outputs = F.softmax(outputs, dim=1)
         recorder.append(outputs.data.cpu().numpy().copy())
     y_true.extend(targets.cpu().numpy().tolist())
     y_pred.extend(outputs.argmax(1).cpu().numpy().tolist())
