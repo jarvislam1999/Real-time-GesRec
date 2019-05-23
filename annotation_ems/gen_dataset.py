@@ -1,6 +1,9 @@
 import os
 import glob
 import math
+import random
+
+random.seed(666)
 
 dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
@@ -23,6 +26,7 @@ labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
 
 def get_list(path, dspath, paired=False):
     samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
+    random.shuffle(samples)
     l = {}
     for s in samples:
         s = os.path.relpath(s, dspath)
