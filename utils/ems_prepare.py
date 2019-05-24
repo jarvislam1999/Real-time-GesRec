@@ -83,11 +83,11 @@ def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_
 
 #%%
 
-dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
+dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 # extract_frames()
 
 csv_dir_path = './annotation_ems'
-r = '07.2-depth'
+r = '07.6'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
 train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
 # train_csv_path = None
