@@ -1,0 +1,4 @@
+1 wrist_up
+2 wrist_down
+3 wrist_left
+4 wrist_right
