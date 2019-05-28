@@ -87,7 +87,7 @@ dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 # extract_frames()
 
 csv_dir_path = './annotation_ems'
-r = '07.6'
+r = '10.2'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
 train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
 # train_csv_path = None
