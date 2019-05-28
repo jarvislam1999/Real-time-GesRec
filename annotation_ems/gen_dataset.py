@@ -10,7 +10,7 @@ random.seed(666)
 dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "11.4"
+round = "11.5"
 modality = "rgb" # d, rgb, rgbd
 
 # train: first n
@@ -22,10 +22,10 @@ train_partition = {
 
 # test: all except first n
 test_partition = {
-    'subject01_human_seq': 10,
-    'subject01_human_seq2': 10,
-    'subject02_human_seq': 20,
-    # 'subject01_seq_base2': 0
+    # 'subject01_human_seq': 10,
+    # 'subject01_human_seq2': 10,
+    # 'subject02_human_seq': 20,
+    'subject01_seq_base2': 0
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
