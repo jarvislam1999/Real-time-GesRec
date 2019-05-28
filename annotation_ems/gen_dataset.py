@@ -10,21 +10,22 @@ random.seed(666)
 dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "10.3"
+round = "11.4"
 modality = "rgb" # d, rgb, rgbd
 
 # train: first n
 train_partition = {
-    # 'subject01_seq_base2': 20,
-    # 'subject01_left_45': 20,
-    'subject01_left_90': 20,
+    'subject01_human_seq': 10,
+    'subject01_human_seq2': 10,
+    'subject02_human_seq': 20,
 }
 
 # test: all except first n
 test_partition = {
-    # 'subject01_seq_base2': 20,
-    # 'subject01_left_45': 20,
-    'subject01_left_90': 20,
+    'subject01_human_seq': 10,
+    'subject01_human_seq2': 10,
+    'subject02_human_seq': 20,
+    # 'subject01_seq_base2': 0
 }
 
 labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
@@ -45,7 +46,6 @@ def get_list(path, dspath, paired=False, modality='rgb'):
     elif modality == 'rgbd':
         samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all'))) + \
             sorted(glob.glob(os.path.join(path, 'depth/*_all')))
-
 
     random.shuffle(samples)
     l = {}
