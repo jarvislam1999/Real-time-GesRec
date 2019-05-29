@@ -10,7 +10,7 @@ random.seed(666)
 dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 output_path = './annotation_ems'
 
-round = "11.5"
+round = "13.1"
 modality = "rgb" # d, rgb, rgbd
 
 # train: first n
