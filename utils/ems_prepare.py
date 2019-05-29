@@ -40,7 +40,11 @@ def load_labels(label_csv_path):
 
 
 def convert_csv_to_dict(csv_path, subset, labels):
-    data = pd.read_csv(csv_path, delimiter=' ', header=None)
+    try:
+        data = pd.read_csv(csv_path, delimiter=' ', header=None)
+    except pd.errors.EmptyDataError:
+        return {}
+
     keys = []
     key_labels = []
     for i in range(data.shape[0]):
@@ -87,7 +91,7 @@ dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
 # extract_frames()
 
 csv_dir_path = './annotation_ems'
-r = '11.5'
+r = '13.1'
 label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % r)
 train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % r)
 # train_csv_path = None
