@@ -1,0 +1,10 @@
+1 arm_down_right
+2 arm_down_left
+3 wrist_right
+4 wrist_down
+5 wrist_left
+6 down_left
+7 arm_down
+8 up_right
+9 wrist_up
+10 up_left

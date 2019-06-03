@@ -1,0 +1,4 @@
+1 supination
+2 pronation
+3 right
+4 left

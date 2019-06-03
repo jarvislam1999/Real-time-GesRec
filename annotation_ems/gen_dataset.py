@@ -6,34 +6,43 @@ import random
 random.seed(666)
 
 dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
-output_path = './annotation_ems'
+output_path = '/mnt/data/zhuoliny/Real-time-GesRec/annotation_ems'
 
-round = "11.3"
-modality = "rgb" # d, rgb, rgbd
+round = "13.1"
+modality = "rgb" # d, rgb, rgbd, no_bg, resize_half, resize_third
 
 # train: first n
 train_partition = {
     #'subject01_left_90': 20,
     #'subject01_left_45': 20,
-    #'subject01_seq_base2': 20,
-    'subject01_human_seq': 10,
-    'subject01_human_seq2': 10,
-    'subject02_human_seq': 20
+    #'subject01_seq_base2': 20
+    #'subject01_human_seq': 10,
+    #'subject01_human_seq2': 10,
+    #'subject02_human_seq': 20,
+    #'subject02_human_2m': 20,
+    #'subject02_human_3m': 20
+    #'subject02_human_5m': 20
+    'subject01_machine_recovery_3gps_2pairs': 50
 }
 
 # test: all except first n
 test_partition = {
     #'subject01_left_90': 20,
     #'subject01_left_45': 20,
-    'subject01_seq_base2': 0,
-    'subject01_human_seq': 10,
-    'subject01_human_seq2': 10,
-    'subject02_human_seq': 20
+    #'subject01_seq_base2': 20
+    #'subject01_human_seq': 10,
+    #'subject01_human_seq2': 10,
+    #'subject02_human_seq': 20,
+    #'subject02_human_2m': 20,
+    #'subject02_human_3m': 20
+    #'subject02_human_5m': 20
+    'subject01_machine_recovery_3gps_2pairs': 50
 }
 
-labels = ['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
-        'arm_down', 'up_left', 'up_right', 'down_left', 
-        'arm_down_left', 'arm_down_right'] 
+labels = ['left', 'right', 'supination', 'pronation'] 
+        #['wrist_up', 'wrist_down', 'wrist_left', 'wrist_right',
+        #'arm_down', 'up_left', 'up_right', 'down_left', 
+        #'arm_down_left', 'arm_down_right'] 
        # 'human_wrist_up', 'human_wrist_down', 
        # 'human_wrist_left', 'human_wrist_right',
        # 'human_arm_down', 'human_up_left', 'human_up_right', 'human_down_left', 
@@ -47,7 +56,14 @@ def get_list(path, dspath, paired=False):
     elif modality == 'rgbd':
         samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all'))) + \
             sorted(glob.glob(os.path.join(path, 'depth/*_all')))
-
+    elif modality == 'no_bg':
+        samples = sorted(glob.glob(os.path.join(path, 'no_bg/*_all')))
+    elif modality == 'resize_half':
+       samples = sorted(glob.glob(os.path.join(path, 'resize_half/*_all')))
+    elif modality == 'resize_third':
+       samples = sorted(glob.glob(os.path.join(path, 'resize_third/*_all')))
+    elif modality == 'resize_ten':
+       samples = sorted(glob.glob(os.path.join(path, 'resize_ten/*_all')))
     #samples = sorted(glob.glob(os.path.join(path, 'rgb/*_all')))
     random.shuffle(samples)
     l = {}
