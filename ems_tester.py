@@ -1,7 +1,7 @@
 import test
 from validation import val_epoch
 from train import train_epoch
-from utils import AverageMeter, calculate_precision, calculate_recall, calculate_accuracy
+from utils import AverageMeter, calculate_precision, calculate_recall
 from utils import Logger
 from dataset import get_training_set, get_validation_set, get_test_set, get_online_data
 from target_transforms import Compose as TargetCompose
@@ -75,33 +75,30 @@ class EMSTester():
         #%%
         warnings.filterwarnings('ignore')
 
+        torch.manual_seed(opt.manual_seed)
 
-        def calculate_accuracy(outputs, targets, topk=(1,)):
-            maxk = max(topk)
-            batch_size = targets.size(0)
-            _, pred = outputs.topk(maxk, 1, True, True)
-            pred = pred.t()
-            correct = pred.eq(targets.view(1, -1).expand_as(pred))
-            ret = []
-            for k in topk:
-                correct_k = correct[:k].float().sum().item()
-                ret.append(correct_k / batch_size)
+        self.opt = opt
 
-            return ret
+    def calculate_accuracy(self, outputs, targets, topk=(1,)):
+        maxk = max(topk)
+        batch_size = targets.size(0)
+        _, pred = outputs.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(targets.view(1, -1).expand_as(pred))
+        ret = []
+        for k in topk:
+            correct_k = correct[:k].float().sum().item()
+            ret.append(correct_k / batch_size)
 
+        return ret
+    def test(self):
+        opt = self.opt
 
         if not os.path.exists(opt.result_path):
             os.makedirs(opt.result_path)
 
         with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
             json.dump(vars(opt), opt_file)
-
-        torch.manual_seed(opt.manual_seed)
-
-        self.opt = opt
-
-    def test(self):
-        opt = self.opt
 
         model, parameters = generate_model(opt)
         pytorch_total_params = sum(p.numel() for p in model.parameters() if
@@ -137,7 +134,7 @@ class EMSTester():
             num_workers=opt.n_threads,
             pin_memory=True)
         test_logger = Logger(os.path.join(opt.result_path, 'test.log'),
-                                ['top1', 'top5', 'precision', 'recall'])
+                                ['top1', 'precision', 'recall'])
 
         if opt.resume_path:
             print('loading checkpoint {}'.format(opt.resume_path))
@@ -176,7 +173,7 @@ class EMSTester():
 
             _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
 
-            prec1 = calculate_accuracy(outputs, targets, topk=(1,))
+            prec1 = self.calculate_accuracy(outputs, targets, topk=(1,))
             precision = calculate_precision(outputs, targets)
             recall = calculate_recall(outputs, targets)
 
@@ -186,7 +183,6 @@ class EMSTester():
 
             batch_time.update(time.time() - end_time)
             end_time = time.time()
-
 
         test_logger.log({
             'top1': top1.avg,

@@ -115,13 +115,14 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
         #n_frames_file_path = os.path.join(video_path, 'n_frames')
         #n_frames = int(load_value_file(n_frames_file_path))
-        n_frames = len(glob.glob(os.path.join(video_path, '*.jpg')))
+        frames = sorted(glob.glob(os.path.join(video_path, '*.jpg')))
+        n_frames = len(frames)
 
         if n_frames <= 0:
             continue
 
-        begin_t = 1
-        end_t = n_frames
+        begin_t = int(frames[0].split('/')[-1].split('.')[0])
+        end_t = begin_t + n_frames - 1
         sample = {
             'video': video_path,
             'segment': [begin_t, end_t],
@@ -135,20 +136,10 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             sample['label'] = -1
 
         if n_samples_for_each_video == 1:
-            sample['frame_indices'] = list(range(1, n_frames + 1))
+            sample['frame_indices'] = list(range(begin_t, end_t + 1))
             dataset.append(sample)
         else:
-            if n_samples_for_each_video > 1:
-                step = max(1,
-                           math.ceil((n_frames - 1 - sample_duration) /
-                                     (n_samples_for_each_video - 1)))
-            else:
-                step = sample_duration
-            for j in range(1, n_frames, step):
-                sample_j = copy.deepcopy(sample)
-                sample_j['frame_indices'] = list(
-                    range(j, min(n_frames + 1, j + sample_duration)))
-                dataset.append(sample_j)
+            raise NotImplementedError()
 
     return dataset, idx_to_class
 

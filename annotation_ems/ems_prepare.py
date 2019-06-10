@@ -107,14 +107,16 @@ def split(video_path, annot_path, fps=30, delay=4/30, duration=10/30):
 
         cnt = ges_cnt.get(ges, 0) + 1
         ges_cnt[ges] = cnt
-        output_dir = os.path.join(video_path.split('/'), '{:03d}_{}_{:02d}_all'.format(j, ges, cnt))
+        output_dir = os.path.join('/'.join(video_path.split('/')[:-1]), '{:03d}_{}_{:02d}_all'.format(j, ges, cnt))
         os.makedirs(output_dir, exist_ok=True)
+        cmd = 'cp '
         for i in range(start, end):
-            os.system('cp {}/{:05d}.jpg {}'.format(directory, i, output_dir))
+            cmd += '{}/{:05d}.jpg '.format(directory, i)
+        os.system(cmd + ' %s' % output_dir)
 
-        d = sorted(glob.glob('%s/*' % output_dir))
+        # d = sorted(glob.glob('%s/*' % output_dir))
 
-        for i in range(len(d)):
-            f = '%05d.jpg' % (i+1)
-            d2 = output_dir + '/' + f
-            os.system('mv %s %s' % (d[i], d2))
+        # for i in range(len(d)):
+        #     f = '%05d.jpg' % (i+1)
+        #     d2 = output_dir + '/' + f
+        #     os.system('mv %s %s' % (d[i], d2))

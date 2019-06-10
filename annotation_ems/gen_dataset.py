@@ -4,7 +4,7 @@ import math
 import random
 
 
-def get_files_of_label(path, dspath, paired=False, modality='rgb'):
+def get_files_of_label(path, dspath, labels, paired=False, modality='rgb'):
     '''
         Return a dict, key is a label, value is a list of files of that label.
     '''
@@ -20,13 +20,13 @@ def get_files_of_label(path, dspath, paired=False, modality='rgb'):
     l = {}
     for s in samples:
         s = os.path.relpath(s, dspath)
-        label = get_label_id(s, paired=paired)
+        label = get_label_id(s, labels, paired=paired)
         if label != None:
             l[label] = l.get(label, [])
             l[label].append(s)
     return l
 
-def make_dataset(path, paired=False, modality='rgb'):
+def make_dataset(path, labels, paired=False, modality='rgb'):
     '''
         Load all dataset under a specific path.
     '''
@@ -34,11 +34,11 @@ def make_dataset(path, paired=False, modality='rgb'):
     dpath = os.path.join(path, 'data')
     for d in glob.glob(os.path.join(dpath, '*')):
         dataset[os.path.relpath(d, dpath)] = get_files_of_label(
-            os.path.join(dpath, d), path, paired=paired, modality=modality)
+            os.path.join(dpath, d), path, labels, paired=paired, modality=modality)
     
     return dataset
 
-def get_label_id(path, paired=False):
+def get_label_id(path, labels, paired=False):
     '''
         Given a file path, return its label id.
     '''
@@ -86,17 +86,17 @@ def generate_dataset(expr_name, train_partition, test_partition, labels, modalit
 
     labels.sort(key=lambda item: (-len(item), item))
 
-    dataset = make_dataset(dataset_path, paired=True, modality=modality)
+    dataset = make_dataset(dataset_path, labels, paired=True, modality=modality)
     train_list = gen_list(dataset, train_partition, labels,
                           'train', sort_by_filename=sort_by_filename)
     test_list = gen_list(dataset, test_partition, labels,
                          'test', sort_by_filename=sort_by_filename)
     write_list(train_list, os.path.join(
-        output_path, 'trainlist' + round + '.txt'))
+        output_path, 'trainlist' + expr_name + '.txt'))
     write_list(test_list, os.path.join(
-        output_path, 'testlist' + round + '.txt'))
+        output_path, 'testlist' + expr_name + '.txt'))
     write_labels(labels, os.path.join(
-        output_path, 'classInd' + round + '.txt'))
+        output_path, 'classInd' + expr_name + '.txt'))
 
 
 if __name__ == '__main__':
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         'subject01_machine_recovery_3gps_02': 50
     }
 
-    labels = ['wrist_left', 'wrist_right']
+    labels = ['wrist_left', 'wrist_right', 'pronation', 'supination']
 
     # labels_human = ['human_' + l for l in labels]
     # labels += labels_human
