@@ -108,3 +108,5 @@ ENV/
 .DS_Store
 
 .vscode
+.swo
+.swp
