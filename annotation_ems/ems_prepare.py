@@ -113,10 +113,3 @@ def split(video_path, annot_path, fps=30, delay=4/30, duration=10/30):
         for i in range(start, end):
             cmd += '{}/{:05d}.jpg '.format(directory, i)
         os.system(cmd + ' %s' % output_dir)
-
-        # d = sorted(glob.glob('%s/*' % output_dir))
-
-        # for i in range(len(d)):
-        #     f = '%05d.jpg' % (i+1)
-        #     d2 = output_dir + '/' + f
-        #     os.system('mv %s %s' % (d[i], d2))

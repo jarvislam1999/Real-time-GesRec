@@ -77,7 +77,14 @@ class EMSTester():
 
         torch.manual_seed(opt.manual_seed)
 
+        model, parameters = generate_model(opt)
+        pytorch_total_params = sum(p.numel() for p in model.parameters() if
+                                p.requires_grad)
+        print("Total number of trainable parameters: ", pytorch_total_params)
+
         self.opt = opt
+        self.model = model
+        self.parameters = parameters
 
     def calculate_accuracy(self, outputs, targets, topk=(1,)):
         maxk = max(topk)
@@ -99,11 +106,6 @@ class EMSTester():
 
         with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
             json.dump(vars(opt), opt_file)
-
-        model, parameters = generate_model(opt)
-        pytorch_total_params = sum(p.numel() for p in model.parameters() if
-                                p.requires_grad)
-        print("Total number of trainable parameters: ", pytorch_total_params)
 
         if opt.no_mean_norm and not opt.std_norm:
             norm_method = Normalize([0, 0, 0], [1, 1, 1])
@@ -142,11 +144,11 @@ class EMSTester():
             assert opt.arch == checkpoint['arch']
 
             opt.begin_epoch = checkpoint['epoch']
-            model.load_state_dict(checkpoint['state_dict'])
+            self.model.load_state_dict(checkpoint['state_dict'])
 
         recorder = []
 
-        model.eval()
+        self.model.eval()
 
         batch_time = AverageMeter()
         top1 = AverageMeter()
@@ -164,7 +166,7 @@ class EMSTester():
             with torch.no_grad():
                 inputs = Variable(inputs)
                 targets = Variable(targets)
-                outputs = model(inputs)
+                outputs = self.model(inputs)
                 if not opt.no_softmax_in_test:
                     outputs = F.softmax(outputs, dim=1)
                 recorder.append(outputs.data.cpu().numpy().copy())
@@ -192,6 +194,6 @@ class EMSTester():
 
         print('-----Evaluation is finished------')
         print('Overall Prec@1 {:.05f}%'.format(
-            top1.avg* 100))
+            top1.avg * 100))
         
-        return y_pred, y_true
+        return y_pred, y_true, test_data
