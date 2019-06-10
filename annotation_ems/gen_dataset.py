@@ -3,35 +3,11 @@ import glob
 import math
 import random
 
-### begin of config
 
-random.seed(666)
-
-dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
-output_path = './annotation_ems'
-
-round = "15.3"
-modality = "rgb" # d, rgb, rgbd
-
-# train: first n
-train_partition = {
-    'subject01_machine_recovery_3gps_02': 50,
-}
-
-# test: all except first n
-test_partition = {
-    'subject01_machine_recovery_3gps_02': 50
-}
-
-labels = ['wrist_left', 'wrist_right']
-
-# labels_human = ['human_' + l for l in labels]
-# labels += labels_human
-
-### end of config
-
-
-def get_list(path, dspath, paired=False, modality='rgb'):
+def get_files_of_label(path, dspath, paired=False, modality='rgb'):
+    '''
+        Return a dict, key is a label, value is a list of files of that label.
+    '''
     if modality == 'd':
         samples = sorted(glob.glob(os.path.join(path, 'depth/*_all')))
     elif modality == 'rgb':
@@ -51,14 +27,21 @@ def get_list(path, dspath, paired=False, modality='rgb'):
     return l
 
 def make_dataset(path, paired=False, modality='rgb'):
+    '''
+        Load all dataset under a specific path.
+    '''
     dataset = {}
     dpath = os.path.join(path, 'data')
     for d in glob.glob(os.path.join(dpath, '*')):
-        dataset[os.path.relpath(d, dpath)] = get_list(os.path.join(dpath, d), path, paired=paired, modality=modality)
+        dataset[os.path.relpath(d, dpath)] = get_files_of_label(
+            os.path.join(dpath, d), path, paired=paired, modality=modality)
     
     return dataset
 
 def get_label_id(path, paired=False):
+    '''
+        Given a file path, return its label id.
+    '''
     if paired:
         path = path.split('FOLLOWED_BY')[-1]
     for i, l in enumerate(labels):
@@ -66,7 +49,10 @@ def get_label_id(path, paired=False):
             return i
     return None
 
-def gen_list(dataset, partition, labels, stage='train'):
+def gen_list(dataset, partition, labels, stage='train', sort_by_filename=False):
+    '''
+        Generate a list of all files specified in `partition`.
+    '''
     l = []
     for k in partition.keys():
         data = dataset[k]
@@ -80,6 +66,8 @@ def gen_list(dataset, partition, labels, stage='train'):
                 l += [(x, str(i+1)) for x in data[i][part if part!=None else len(data[i]):]]
             else:
                 raise NotImplementedError()
+    if sort_by_filename:
+        l.sort(key=lambda item: item[0])
     return l
 
 def write_list(l, path):
@@ -91,11 +79,50 @@ def write_labels(labels, path):
     with open(path, 'w') as f:
         f.write('\n'.join(class_ind))
 
-labels.sort(key=lambda item: (-len(item), item))
 
-dataset = make_dataset(dataset_path, paired=True, modality=modality)
-train_list = gen_list(dataset, train_partition, labels, 'train')
-test_list = gen_list(dataset, test_partition, labels, 'test')
-write_list(train_list, os.path.join(output_path, 'trainlist' + round + '.txt'))
-write_list(test_list, os.path.join(output_path, 'testlist' + round + '.txt'))
-write_labels(labels, os.path.join(output_path, 'classInd' + round + '.txt'))
+def generate_dataset(expr_name, train_partition, test_partition, labels, modality, dataset_path, output_path='./annotation_ems', random_seed=666, sort_by_filename=False):
+
+    random.seed(666)
+
+    labels.sort(key=lambda item: (-len(item), item))
+
+    dataset = make_dataset(dataset_path, paired=True, modality=modality)
+    train_list = gen_list(dataset, train_partition, labels,
+                          'train', sort_by_filename=sort_by_filename)
+    test_list = gen_list(dataset, test_partition, labels,
+                         'test', sort_by_filename=sort_by_filename)
+    write_list(train_list, os.path.join(
+        output_path, 'trainlist' + round + '.txt'))
+    write_list(test_list, os.path.join(
+        output_path, 'testlist' + round + '.txt'))
+    write_labels(labels, os.path.join(
+        output_path, 'classInd' + round + '.txt'))
+
+
+if __name__ == '__main__':
+    ### begin of config
+
+    dataset_path = '/fastdata/yxchen/gesture-datasets/ems'
+    output_path = './annotation_ems'
+
+    round = "15.3"
+    modality = "rgb"  # d, rgb, rgbd
+
+    # train: first n
+    train_partition = {
+        'subject01_machine_recovery_3gps_02': 50,
+    }
+
+    # test: all except first n
+    test_partition = {
+        'subject01_machine_recovery_3gps_02': 50
+    }
+
+    labels = ['wrist_left', 'wrist_right']
+
+    # labels_human = ['human_' + l for l in labels]
+    # labels += labels_human
+
+    ### end of config
+
+    generate_dataset(expr_name=round, modality=modality, dataset_path=dataset_path, output_path=output_path, train_partition=train_partition, test_partition=test_partition, labels=labels)
