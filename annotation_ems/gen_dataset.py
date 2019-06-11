@@ -56,10 +56,10 @@ def gen_list(dataset, partition, labels, stage='train', sort_by_filename=False):
     l = []
     for k in partition.keys():
         data = dataset[k]
-        part = partition[k]
         for i, label in enumerate(labels):
             if not i in data.keys():
                 continue
+            part = min(partition[k], len(data[i]))
             if stage == 'train':
                 l += [(x, str(i+1)) for x in data[i][:part]]
             elif stage == 'test':
