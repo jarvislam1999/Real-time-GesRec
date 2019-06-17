@@ -25,8 +25,6 @@ import math
 import pandas as pd
 import json
 import sys
-import zerorpc
-import gevent
 import time
 import os
 import random
@@ -98,8 +96,18 @@ class EMSTester():
             ret.append(correct_k / batch_size)
 
         return ret
-    def test(self):
+    def test(self, annotation_path='', video_path=''):
         opt = self.opt
+        
+        if annotation_path != '':
+            opt.annotation_path = annotation_path
+            if opt.root_path != '':
+                opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
+        
+        if video_path != '':
+            opt.video_path = video_path
+            if opt.root_path != '':
+                opt.video_path = os.path.join(opt.root_path, opt.video_path)
 
         if not os.path.exists(opt.result_path):
             os.makedirs(opt.result_path)
