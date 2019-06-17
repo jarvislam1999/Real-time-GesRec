@@ -3,7 +3,7 @@ from ems_prepare import split, prepare_json
 
 ### begin of config
 
-dataset_path = '/mnt/data/yxchen/gesture-datasets/ems'
+dataset_path = '/mnt/data/jarvislam1999'
 output_path = './annotation_ems'
 
 expr_name = "16"
@@ -11,13 +11,13 @@ modality = "rgb"  # d, rgb, rgbd
 
 # train: first n
 train_partition = {
-    'subject01_machine_recovery_3gps_2pairs': 50,
+    #'subject01_machine_recovery_3gps_2pairs': 0,
 }
 
 
 # test: all except first n
 test_partition = {
-    'subject01_machine_recovery_3gps_2pairs': 50
+    'subject01_machine_recovery_3gps_2pairs': 0
 }
 
 labels = ['wrist_left', 'wrist_right', 'pronation', 'supination']
