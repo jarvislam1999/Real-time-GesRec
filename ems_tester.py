@@ -148,17 +148,21 @@ class EMSTester():
 
         if opt.resume_path:
             print('loading checkpoint {}'.format(opt.resume_path))
-            checkpoint = torch.load(opt.resume_path)
+            if not opt.no_cuda:
+                checkpoint = torch.load(opt.resume_path)
+            else:
+                checkpoint = torch.load(opt.resume_path, 'cpu')
             assert opt.arch == checkpoint['arch']
 
             opt.begin_epoch = checkpoint['epoch']
-            self.model.load_state_dict(checkpoint['state_dict'])
+            self.model.load_state_dict(checkpoint['state_dict'], False)
 
         recorder = []
 
         self.model.eval()
 
         batch_time = AverageMeter()
+        print('Batch time:', batch_time.avg)
         top1 = AverageMeter()
         precisions = AverageMeter()
         recalls = AverageMeter()
@@ -199,7 +203,7 @@ class EMSTester():
             'precision': precisions.avg,
             'recall': recalls.avg
         })
-
+        print('Batch time:', batch_time.avg)
         print('-----Evaluation is finished------')
         print('Overall Prec@1 {:.05f}%'.format(
             top1.avg * 100))
