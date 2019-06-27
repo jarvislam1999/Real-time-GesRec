@@ -24,6 +24,8 @@ def pil_loader(path, modality):
                 return img.convert('RGB')
             elif modality == 'Flow':
                 return img.convert('L')
+            elif modality == 'Depth':
+                return img.convert('L')
 
 
 def accimage_loader(path, modality):
@@ -55,6 +57,30 @@ def video_loader(video_dir_path, frame_indices, modality, sample_duration, image
             else:
                 print(image_path, "------- Does not exist")
                 return video
+
+    elif modality == 'Depth':
+        for i in frame_indices:
+            image_path = os.path.join(video_dir_path, '{:05d}.jpg'.format(i))
+            if os.path.exists(image_path):
+                video.append(image_loader(image_path, modality))
+            else:
+                print(image_path, "------- Does not exist")
+                return video
+
+    elif modality == 'RGB-D':
+        for i in frame_indices: # index 35 is used to change img to flow
+            image_path = os.path.join(video_dir_path, '{:05d}.jpg'.format(i))
+            image_path_depth = os.path.join(video_dir_path.rsplit(os.sep,2)[0] , 'Depth','depth' + video_dir_path[-1], '{:05d}.jpg'.format(i) )
+    
+            image = image_loader(image_path, 'RGB')
+            image_depth = image_loader(image_path_depth, 'Depth')
+            if os.path.exists(image_path):
+                video.append(image)
+                video.append(image_depth)
+            else:
+                print(image_path, "------- Does not exist")
+                return video
+
     return video
 
 
@@ -102,27 +128,26 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         idx_to_class[label] = name
 
     dataset = []
-    print("[INFO]: Jester Dataset - " + subset + " is loading...")
+    print("[INFO]: EMS Dataset - " + subset + " is loading...")
     for i in range(len(video_names)):
     # to test first 3000 only, use this one:
     # for i in range(3000):
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
-
         video_path = os.path.join(root_path, video_names[i])
-        
-        if not os.path.exists(video_path):
-            continue
+        print(video_path) 
+        assert(os.path.exists(video_path))
 
         #n_frames_file_path = os.path.join(video_path, 'n_frames')
         #n_frames = int(load_value_file(n_frames_file_path))
-        n_frames = len(glob.glob(os.path.join(video_path, '*.jpg')))
+        frames = sorted(glob.glob(os.path.join(video_path, '*.jpg')))
+        n_frames = len(frames)
 
         if n_frames <= 0:
             continue
 
-        begin_t = 1
-        end_t = n_frames
+        begin_t = int(frames[0].split('/')[-1].split('.')[0])
+        end_t = begin_t + n_frames - 1
         sample = {
             'video': video_path,
             'segment': [begin_t, end_t],
@@ -136,27 +161,17 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             sample['label'] = -1
 
         if n_samples_for_each_video == 1:
-            sample['frame_indices'] = list(range(1, n_frames + 1))
+            sample['frame_indices'] = list(range(begin_t, end_t + 1))
             dataset.append(sample)
         else:
-            if n_samples_for_each_video > 1:
-                step = max(1,
-                           math.ceil((n_frames - 1 - sample_duration) /
-                                     (n_samples_for_each_video - 1)))
-            else:
-                step = sample_duration
-            for j in range(1, n_frames, step):
-                sample_j = copy.deepcopy(sample)
-                sample_j['frame_indices'] = list(
-                    range(j, min(n_frames + 1, j + sample_duration)))
-                dataset.append(sample_j)
+            raise NotImplementedError()
 
     return dataset, idx_to_class
 
 
 
 
-class Jester(data.Dataset):
+class EMS(data.Dataset):
     """
     Args:
         root (string): Root directory path.
@@ -205,6 +220,7 @@ class Jester(data.Dataset):
         path = self.data[index]['video']
 
         frame_indices = self.data[index]['frame_indices']
+
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
         clip = self.loader(path, frame_indices, self.modality, self.sample_duration)

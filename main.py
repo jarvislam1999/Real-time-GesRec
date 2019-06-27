@@ -21,6 +21,8 @@ from validation import val_epoch
 import test
 import pdb
 
+import shutil
+
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
     torch.save(state, '%s/%s_checkpoint.pth' % (opt.result_path, opt.store_name))
@@ -39,8 +41,8 @@ if __name__ == '__main__':
     opt = parse_opts_offline()
     if opt.root_path != '':
         # Join some given paths with root path 
-        if opt.result_path:
-            opt.result_path = os.path.join(opt.root_path, opt.result_path)
+#        if opt.result_path:
+#            opt.result_path = os.path.join(opt.root_path, opt.result_path)
         if opt.annotation_path:
             opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
         if opt.resume_path:
@@ -57,6 +59,10 @@ if __name__ == '__main__':
     opt.mean = get_mean(opt.norm_value)
     opt.std = get_std(opt.norm_value)
     print(opt)
+
+    if not os.path.exists(opt.result_path):
+        os.makedirs(opt.result_path)
+
     with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
         json.dump(vars(opt), opt_file)
 
@@ -110,7 +116,8 @@ if __name__ == '__main__':
         target_transform = ClassLabel()
         training_data = get_training_set(opt, spatial_transform,
                                          temporal_transform, target_transform)
-        
+        print(training_data)
+        print('get traing data')
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,
@@ -187,6 +194,8 @@ if __name__ == '__main__':
                 'optimizer': optimizer.state_dict(),
                 'best_prec1': best_prec1
                 }
+            if is_best:
+                print('current best: ', i)
             save_checkpoint(state, is_best)
 
         # if not opt.no_train and not opt.no_val:

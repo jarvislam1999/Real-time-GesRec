@@ -1,7 +1,7 @@
 import argparse
 
 
-def parse_opts_offline():
+def parse_opts_offline(args=None):
     # Offline means not real time 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -274,7 +274,7 @@ def parse_opts_offline():
         help='If true, loss is weighted')
     parser.set_defaults(weighted=False)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     return args
 

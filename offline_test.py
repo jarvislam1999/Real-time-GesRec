@@ -29,7 +29,7 @@ from utils import AverageMeter, calculate_precision, calculate_recall
 import pdb
 from sklearn.metrics import confusion_matrix
 
-def plot_cm(cm, classes, normalize = True):
+def plot_cm(cm, classes=None, normalize = True):
     import seaborn as sns
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
@@ -44,6 +44,8 @@ def plot_cm(cm, classes, normalize = True):
     ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
     plt.xticks(rotation='vertical')
     plt.yticks(rotation='horizontal')
+
+    print("Confusion matrix plotted")
     
 
 
@@ -78,6 +80,10 @@ opt.mean = get_mean(opt.norm_value)
 opt.std = get_std(opt.norm_value)
 
 print(opt)
+
+if not os.path.exists(opt.result_path):
+    os.makedirs(opt.result_path)
+
 with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
     json.dump(vars(opt), opt_file)
 
@@ -96,13 +102,28 @@ elif not opt.std_norm:
 else:
     norm_method = Normalize(opt.mean, opt.std)
 
-
+# original
 spatial_transform = Compose([
     #Scale(opt.sample_size),
     Scale(112),
     CenterCrop(112),
     ToTensor(opt.norm_value), norm_method
     ])
+
+# test 15deg bl crop
+# spatial_transform = Compose([
+#     #Scale(opt.sample_size),
+#     Scale(112),
+#     CornerCrop(112, 'bl'),
+#     ToTensor(opt.norm_value), norm_method
+#     ])
+
+# test 1m center bottom crop
+# spatial_transform = Compose([
+#     CenterBottomCrop(),
+#     Scale(112),
+#     ToTensor(opt.norm_value), norm_method
+#     ])
 temporal_transform = TemporalCenterCrop(opt.sample_duration)
 #temporal_transform = TemporalBeginCrop(opt.sample_duration)
 #temporal_transform = TemporalEndCrop(opt.sample_duration)
@@ -132,7 +153,6 @@ if opt.resume_path:
 #test.test(test_loader, model, opt, test_data.class_names)
 
 
-
 recorder = []
 
 print('run')
@@ -148,19 +168,25 @@ recalls = AverageMeter()
 y_true = []
 y_pred = []
 end_time = time.time()
+
+# fout = open(os.path.join(opt.result_path, 'result.csv'), 'w')
+
 for i, (inputs, targets) in enumerate(test_loader):
     if not opt.no_cuda:
-        targets = targets.cuda(async=True)
+        targets = targets.cuda(non_blocking=True)
     #inputs = Variable(torch.squeeze(inputs), volatile=True)
     with torch.no_grad():
         inputs = Variable(inputs)
         targets = Variable(targets)
         outputs = model(inputs)
         if not opt.no_softmax_in_test:
-            outputs = F.softmax(outputs)
+            outputs = F.softmax(outputs, dim=1)
         recorder.append(outputs.data.cpu().numpy().copy())
     y_true.extend(targets.cpu().numpy().tolist())
     y_pred.extend(outputs.argmax(1).cpu().numpy().tolist())
+
+    _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
+    # fout.write('%s;%s\n' % (test_data.data[i]['video_id'], test_data.class_names[_cls]))
 
     #outputs = torch.unsqueeze(torch.mean(outputs, 0), 0)
     #pdb.set_trace()
@@ -227,3 +253,17 @@ test_logger.log({
 
 print('-----Evaluation is finished------')
 print('Overall Prec@1 {:.05f}% Prec@5 {:.05f}%'.format(top1.avg, top5.avg))
+
+cf = confusion_matrix(y_true, y_pred).astype(float)
+
+cls_cnt = cf.sum(axis=1)
+cls_hit = np.diag(cf)
+cls_acc = cls_hit / cls_cnt
+#print('Class Accuracy {:.02f}%'.format(cls_acc * 100))
+for i in range(len(test_data.class_names)):
+    print(test_data.class_names[i], ': {:.02f}%'.format(cls_acc[i]))
+plot_cm(cf)
+
+print("y_true, y_pred")
+for i in range(len(y_true)):
+    print(y_true[i], y_pred[i])

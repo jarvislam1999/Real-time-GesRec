@@ -102,7 +102,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         idx_to_class[label] = name
 
     dataset = []
-    print("[INFO]: Jester Dataset - " + subset + " is loading...")
+    print("[INFO]: Self-collect Dataset - " + subset + " is loading...")
     for i in range(len(video_names)):
     # to test first 3000 only, use this one:
     # for i in range(3000):
