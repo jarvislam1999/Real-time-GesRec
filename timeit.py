@@ -12,7 +12,6 @@ from mean import get_mean, get_std
 from model import generate_model
 from opts import parse_opts_offline
 from torch.nn import functional as F
-from sklearn.metrics import confusion_matrix
 from torch.autograd import Variable
 import torch
 import torchvision
@@ -32,7 +31,7 @@ import random
 import warnings
 
 class EMSTester():
-    def __init__(self, root_path, video_path, annotation_path, result_path, model_path):
+    def __init__(self, root_path='', video_path='', annotation_path='', result_path='', model_path=''):
 
         opt = parse_opts_offline(
             ['--root_path', root_path,
@@ -85,18 +84,6 @@ class EMSTester():
         self.model = model
         self.parameters = parameters
 
-    def calculate_accuracy(self, outputs, targets, topk=(1,)):
-        maxk = max(topk)
-        batch_size = targets.size(0)
-        _, pred = outputs.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(targets.view(1, -1).expand_as(pred))
-        ret = []
-        for k in topk:
-            correct_k = correct[:k].float().sum().item()
-            ret.append(correct_k / batch_size)
-
-        return ret
     def test(self, annotation_path='', video_path=''):
         opt = self.opt
         
@@ -172,3 +159,7 @@ class EMSTester():
 
         print('-----Evaluation is finished------')
         print('Avg Time: %.5fs' % batch_time.avg)
+
+
+ems_tester = EMSTester()
+ems_tester.test()
