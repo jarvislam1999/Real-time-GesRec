@@ -19,7 +19,7 @@ train_partition = {
     'subject01_bg03': 40,
     'subject01_bg04': 40,
     'subject01_bg05': 40,
-    'subject01_bg06': 40
+    'subject01_dyn_bg01': 40
 }
 
 # test: all except first n
@@ -30,7 +30,7 @@ test_partition = {
     'subject01_bg03': 40,
     'subject01_bg04': 40,
     'subject01_bg05': 40,
-    'subject01_bg06': 40
+    'subject01_dyn_bg01': 40
 }
 
 labels = ['wrist_left', 'wrist_right', 'pronation', 'supination']
