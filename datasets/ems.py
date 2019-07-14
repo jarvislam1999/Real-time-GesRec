@@ -24,6 +24,8 @@ def pil_loader(path, modality):
                 return img.convert('RGB')
             elif modality == 'Flow':
                 return img.convert('L')
+            elif modality == 'Depth':
+                return img.convert('L')
 
 
 def accimage_loader(path, modality):
@@ -55,9 +57,10 @@ def video_loader(video_dir_path, frame_indices, modality, sample_duration, image
             else:
                 print(image_path, "------- Does not exist")
                 return video
+
     elif modality == 'Depth':
-        for i in frame_indices：
-            image_path = os.path.join(video_dir_path.replace('rgb', 'depth'), '{:05d}.jpg'.format(i))
+        for i in frame_indices:
+            image_path = os.path.join(video_dir_path, '{:05d}.jpg'.format(i))
             if os.path.exists(image_path):
                 video.append(image_loader(image_path, modality))
             else:
@@ -133,13 +136,14 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
         #n_frames_file_path = os.path.join(video_path, 'n_frames')
         #n_frames = int(load_value_file(n_frames_file_path))
-        n_frames = len(glob.glob(os.path.join(video_path, '*.jpg')))
+        frames = sorted(glob.glob(os.path.join(video_path, '*.jpg')))
+        n_frames = len(frames)
 
         if n_frames <= 0:
             continue
 
-        begin_t = 1
-        end_t = n_frames
+        begin_t = int(frames[0].split('/')[-1].split('.')[0])
+        end_t = begin_t + n_frames - 1
         sample = {
             'video': video_path,
             'segment': [begin_t, end_t],
