@@ -31,7 +31,7 @@ import random
 import warnings
 
 class EMSTester():
-    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality):
+    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality='RGB'):
         opt = parse_opts_offline(
             ['--root_path', root_path,
             '--video_path', video_path, 
