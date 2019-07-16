@@ -41,8 +41,8 @@ if __name__ == '__main__':
     opt = parse_opts_offline()
     if opt.root_path != '':
         # Join some given paths with root path 
-        if opt.result_path:
-            opt.result_path = os.path.join(opt.root_path, opt.result_path)
+       if opt.result_path:
+           opt.result_path = os.path.join(opt.root_path, opt.result_path)
         if opt.annotation_path:
             opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
         if opt.resume_path:
@@ -116,7 +116,6 @@ if __name__ == '__main__':
         target_transform = ClassLabel()
         training_data = get_training_set(opt, spatial_transform,
                                          temporal_transform, target_transform)
-        
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,

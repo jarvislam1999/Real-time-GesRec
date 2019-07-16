@@ -31,8 +31,7 @@ import random
 import warnings
 
 class EMSTester():
-    def __init__(self, root_path, video_path, annotation_path, result_path, model_path):
-
+    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality):
         opt = parse_opts_offline(
             ['--root_path', root_path,
             '--video_path', video_path, 
@@ -48,7 +47,7 @@ class EMSTester():
             '--n_finetune_classes', '4',
             '--n_threads', '1',
             '--checkpoint', '1',
-            '--modality', 'RGB',
+            '--modality', modality,
             '--n_val_samples', '1',
             '--test_subset', 'test']
         )
@@ -96,6 +95,7 @@ class EMSTester():
             ret.append(correct_k / batch_size)
 
         return ret
+
     def test(self, annotation_path='', video_path=''):
         opt = self.opt
         
