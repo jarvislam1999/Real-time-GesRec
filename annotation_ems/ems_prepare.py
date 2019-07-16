@@ -39,19 +39,21 @@ def convert_csv_to_dict(csv_path, subset, labels):
     
     return database
 
-def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_csv_path, dst_json_path):
+def convert_jester_csv_to_activitynet_json(label_csv_path, train_csv_path, test_csv_path, val_csv_path, dst_json_path):
     labels = load_labels(label_csv_path)
     if train_csv_path:
         train_database = convert_csv_to_dict(train_csv_path, 'training', labels)
     else:
         train_database = {}
     test_database = convert_csv_to_dict(test_csv_path, 'testing', labels)
+    val_database = convert_csv_to_dict(val_csv_path, 'validation', labels)
     
     dst_data = {}
     dst_data['labels'] = labels
     dst_data['database'] = {}
     dst_data['database'].update(train_database)
     dst_data['database'].update(test_database)
+    dst_data['database'].update(val_database)
 
     with open(dst_json_path, 'w') as dst_file:
         json.dump(dst_data, dst_file)
@@ -68,10 +70,11 @@ def prepare_json(csv_dir_path='./annotation_ems', expr_name='15.3'):
     label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % expr_name)
     train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % expr_name)
     test_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % expr_name)
+    val_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % expr_name)
     dst_json_path = os.path.join(csv_dir_path, 'ems%s.json' % expr_name)
 
     convert_jester_csv_to_activitynet_json(
-        label_csv_path, train_csv_path, test_csv_path, dst_json_path)
+        label_csv_path, train_csv_path, test_csv_path, val_csv_path, dst_json_path)
 
 def split(video_path, annot_path, fps=30, delay=4/30, duration=10/30):
     """ Split a single video file into multiple clips based on annotation.

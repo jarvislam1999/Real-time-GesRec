@@ -49,7 +49,7 @@ def get_label_id(path, labels, paired=False):
             return i
     return None
 
-def gen_list(dataset, partition, labels, stage='train', sort_by_filename=False):
+def gen_list(dataset, partition, labels, stage='train', sort_by_filename=False, val_percentage=None):
     '''
         Generate a list of all files specified in `partition`.
     '''
@@ -61,7 +61,9 @@ def gen_list(dataset, partition, labels, stage='train', sort_by_filename=False):
                 continue
             part = min(partition[k], len(data[i]))
             if stage == 'train':
-                l += [(x, str(i+1)) for x in data[i][:part]]
+                l += [(x, str(i + 1)) for x in data[i][:int(part*(1-val_percentage))]]
+            elif stage == 'val':
+                l += [(x, str(i + 1)) for x in data[i][:int(part*val_percentage)]]
             elif stage == 'test':
                 l += [(x, str(i+1)) for x in data[i][part if part!=None else len(data[i]):]]
             else:
@@ -80,7 +82,7 @@ def write_labels(labels, path):
         f.write('\n'.join(class_ind))
 
 
-def generate_dataset(expr_name, train_partition, test_partition, labels, modality, dataset_path, output_path='./annotation_ems', random_seed=666, sort_by_filename=False):
+def generate_dataset(expr_name, train_partition, test_partition, labels, modality, dataset_path, output_path='./annotation_ems', random_seed=666, sort_by_filename=False, val_percentage=0):
 
     random.seed(666)
 
@@ -88,13 +90,17 @@ def generate_dataset(expr_name, train_partition, test_partition, labels, modalit
 
     dataset = make_dataset(dataset_path, labels, paired=True, modality=modality)
     train_list = gen_list(dataset, train_partition, labels,
-                          'train', sort_by_filename=sort_by_filename)
+                          'train', sort_by_filename=sort_by_filename, val_percentage=val_percentage)
+    val_list = gen_list(dataset, train_partition, labels,
+                          'val', sort_by_filename=sort_by_filename, val_percentage=val_percentage)
     test_list = gen_list(dataset, test_partition, labels,
                          'test', sort_by_filename=sort_by_filename)
     write_list(train_list, os.path.join(
         output_path, 'trainlist' + expr_name + '.txt'))
     write_list(test_list, os.path.join(
         output_path, 'testlist' + expr_name + '.txt'))
+    write_list(val_list, os.path.join(
+        output_path, 'vallist' + expr_name + '.txt'))
     write_labels(labels, os.path.join(
         output_path, 'classInd' + expr_name + '.txt'))
 
