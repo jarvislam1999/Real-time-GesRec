@@ -67,7 +67,7 @@ def video_loader(video_dir_path, frame_indices, modality, sample_duration, image
                 print(image_path, "------- Does not exist")
                 return video
     elif modality == 'RGB-D':
-        for i in frame_indices：
+        for i in frame_indices:
             image_path = os.path.join(video_dir_path, '{:05d}.jpg'.format(i))
             image_path_depth = os.path.join(video_dir_path.replace('rgb', 'depth'), '{:05d}.jpg'.format(i))
             if os.path.exists(image_path) and os.path.exists(image_path_depth):
