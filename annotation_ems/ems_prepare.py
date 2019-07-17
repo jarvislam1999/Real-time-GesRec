@@ -70,7 +70,7 @@ def prepare_json(csv_dir_path='./annotation_ems', expr_name='15.3'):
     label_csv_path = os.path.join(csv_dir_path, 'classInd%s.txt' % expr_name)
     train_csv_path = os.path.join(csv_dir_path, 'trainlist%s.txt' % expr_name)
     test_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % expr_name)
-    val_csv_path = os.path.join(csv_dir_path, 'testlist%s.txt' % expr_name)
+    val_csv_path = os.path.join(csv_dir_path, 'vallist%s.txt' % expr_name)
     dst_json_path = os.path.join(csv_dir_path, 'ems%s.json' % expr_name)
 
     convert_jester_csv_to_activitynet_json(
