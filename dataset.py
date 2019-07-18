@@ -65,7 +65,7 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
         validation_data = EMS(
             opt.video_path,
             opt.annotation_path,
-            'testing',
+            'validation',
             opt.n_val_samples,
             spatial_transform,
             temporal_transform,
