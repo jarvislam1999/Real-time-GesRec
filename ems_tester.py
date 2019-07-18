@@ -31,7 +31,7 @@ import random
 import warnings
 
 class EMSTester():
-    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality='RGB'):
+    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality='RGB', sample_duration=32):
         opt = parse_opts_offline(
             ['--root_path', root_path,
             '--video_path', video_path, 
@@ -39,7 +39,7 @@ class EMSTester():
             '--result_path', result_path,
             '--resume_path', model_path,
             '--dataset', 'ems',
-            '--sample_duration', '32',
+            '--sample_duration', str(sample_duration),
             '--model', 'resnext',
             '--model_depth', '101',
             '--resnet_shortcut', 'B',
