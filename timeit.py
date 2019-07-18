@@ -1,27 +1,26 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-from validation import val_epoch
-from train import train_epoch
-from utils import AverageMeter
-from mean import get_mean, get_std
-from model import generate_model
-from opts import parse_opts_offline
-from torch.nn import functional as F
-from torch.autograd import Variable
-import torch
-import torchvision
-import itertools
-import numpy as np
-import shutil
-import argparse
-import math
-import json
-import sys
-import time
-import os
-import random
 import warnings
+import random
+import time
+import sys
+import json
+import math
+import argparse
+import shutil
+import numpy as np
+import itertools
+import torchvision
+import torch
+from torch.autograd import Variable
+from torch.nn import functional as F
+from opts import parse_opts_offline
+from model import generate_model
+from mean import get_mean, get_std
+from utils import AverageMeter
+from train import train_epoch
+from validation import val_epoch
 
 
 class FakeData():
@@ -152,46 +151,49 @@ class EMSTester():
                 opt.video_path = os.path.join(opt.root_path, opt.video_path)
 
         nch = 3 if self.modality == 'RGB' else 1
-        test_data = FakeData(size=1, image_size=(
-            nch, self.sample_duration, self.sample_size, self.sample_size),num_classes=4)
+        test_data = FakeData(size=100, image_size=(
+            nch, self.sample_duration, self.sample_size, self.sample_size), num_classes=4)
 
         test_loader = torch.utils.data.DataLoader(
             test_data,
             batch_size=1,
             shuffle=False,
             num_workers=1,
-            pin_memory=True)
+            pin_memory=False)
 
         recorder = []
 
         self.model.eval()
 
         batch_time = AverageMeter()
+        running_time = AverageMeter()
         end_time = time.time()
 
         print('start evaluation')
 
-        for j in range(100):
-            for i, (inputs, targets) in enumerate(test_loader):
-                if not opt.no_cuda:
-                    targets = targets.cuda(non_blocking=True)
-                #inputs = Variable(torch.squeeze(inputs), volatile=True)
-                with torch.no_grad():
-                    inputs = Variable(inputs)
-                    targets = Variable(targets)
-                    outputs = self.model(inputs)
-                    if not opt.no_softmax_in_test:
-                        outputs = F.softmax(outputs, dim=1)
-                    recorder.append(outputs.data.cpu().numpy().copy())
+        for i, (inputs, targets) in enumerate(test_loader):
+            start_running_time = time.time()
+            if not opt.no_cuda:
+                targets = targets.cuda(non_blocking=True)
+            #inputs = Variable(torch.squeeze(inputs), volatile=True)
+            with torch.no_grad():
+                inputs = Variable(inputs)
+                targets = Variable(targets)
+                outputs = self.model(inputs)
+                if not opt.no_softmax_in_test:
+                    outputs = F.softmax(outputs, dim=1)
+                recorder.append(outputs.data.cpu().numpy().copy())
 
-                _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
+            _cls = outputs.argmax(1).cpu().numpy().tolist()[0]
 
-                batch_time.update(time.time() - end_time)
-                end_time = time.time()
+            batch_time.update(time.time() - end_time)
+            running_time.update(time.time() - start_running_time)
+            end_time = time.time()
 
         print('-----Evaluation is finished------')
-        print('Avg Time: %.5fs' % batch_time.avg)
+        print('Avg data Time: %.5fs' % batch_time.avg)
+        print('Avg running Time: %.5fs' % running_time.avg)
 
 
-ems_tester = EMSTester(sample_duration=10, modality='RGB', sample_size=56)
+ems_tester = EMSTester(sample_duration=10, modality='RGB', sample_size=112)
 ems_tester.test()
