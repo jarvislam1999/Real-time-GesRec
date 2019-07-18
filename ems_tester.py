@@ -201,6 +201,7 @@ class EMSTester():
         })
 
         print('-----Evaluation is finished------')
+        print('Avg time: {:.05f}s'.format(batch_time.avg))
         print('Overall Prec@1 {:.05f}%'.format(
             top1.avg * 100))
         
