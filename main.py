@@ -106,6 +106,7 @@ if __name__ == '__main__':
             crop_method = MultiScaleCornerCrop(
                 opt.scales, opt.sample_size, crop_positions=['c'])
         spatial_transform = Compose([
+            ZoomIn((320, 240)),
             crop_method,
             SpatialElasticDisplacement(),
             ToTensor(opt.norm_value), norm_method
@@ -144,6 +145,7 @@ if __name__ == '__main__':
         #     optimizer, 'min', patience=opt.lr_patience)
     if not opt.no_val:
         spatial_transform = Compose([
+            ZoomIn((320, 240)),
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value), norm_method
