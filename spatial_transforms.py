@@ -212,11 +212,13 @@ class CenterCrop(object):
         pass
 
 class ZoomIn(object):
-    def __init__(self, size):
+    def __init__(self, size, pos):
         if isinstance(size, numbers.Number):
             self.size = (int(size), int(size))
         else:
             self.size = size
+        
+        self.pos = pos
 
     def __call__(self, img):
         """
@@ -227,8 +229,8 @@ class ZoomIn(object):
         """
         w, h = img.size
         th, tw = self.size
-        x1 = int(round(w - tw))
-        y1 = int(round((h - th) / 2.))
+        x1 = int(round((w - tw) / self.pos[0]))
+        y1 = int(round((h - th) / self.pos[1]))
         return img.crop((x1, y1, x1 + tw, y1 + th))
 
     def randomize_parameters(self):
