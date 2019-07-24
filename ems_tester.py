@@ -31,7 +31,7 @@ import random
 import warnings
 
 class EMSTester():
-    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality='RGB', sample_duration=32):
+    def __init__(self, root_path, video_path, annotation_path, result_path, model_path, modality='RGB', sample_duration=32, sample_size=112):
         opt = parse_opts_offline(
             ['--root_path', root_path,
             '--video_path', video_path, 
@@ -40,6 +40,7 @@ class EMSTester():
             '--resume_path', model_path,
             '--dataset', 'ems',
             '--sample_duration', str(sample_duration),
+            '--sample_size', str(sample_size),
             '--model', 'resnext',
             '--model_depth', '101',
             '--resnet_shortcut', 'B',
@@ -124,9 +125,8 @@ class EMSTester():
 
         # original
         spatial_transform = Compose([
-            #Scale(opt.sample_size),
-            Scale(112),
-            CenterCrop(112),
+            Scale(opt.sample_size),
+            CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value), norm_method
         ])
 
