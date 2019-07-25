@@ -403,8 +403,8 @@ class MultiScaleRandomCrop(object):
 
     def randomize_parameters(self):
         self.scale = self.scales[random.randint(0, len(self.scales) - 1)]
-        self.tl_x = random.random()
-        self.tl_y = random.random()
+        self.tl_x = random.uniform(0.5-0.2, 0.5+0.2)
+        self.tl_y = random.uniform(0.5-0.2, 0.5+0.2)
 class SpatialElasticDisplacement(object):
 
     def __init__(self, sigma=2.0, alpha=1.0, order=0, cval=0, mode="constant"):

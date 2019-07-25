@@ -24,4 +24,7 @@ CUDA_VISIBLE_DEVICES=1 python main.py \
 	--n_val_samples 1 \
 	--test_subset test \
     --n_epochs 30 \
+	--initial_scale 1 \
+	--scale_step 0.95 \
+	--n_scales 13 \
     --checkpoint 5
